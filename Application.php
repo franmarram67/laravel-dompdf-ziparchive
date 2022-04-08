@@ -19,7 +19,7 @@ class PDFController extends Controller
         $temps = [];
         // Each pdf must be a DOMPDF (\PDF) object
         foreach($pdfs as $pdf) {
-            $name = "name_of_your_file.pdf";
+            $name = "name_of_your_pdf.pdf";
             $relativePath = "pdf/".$name;
             
             $content = $pdf->download($relativePath)->getOriginalContent();
@@ -43,6 +43,6 @@ class PDFController extends Controller
         }
 
         // Download Zip
-        return response()->download($zip_file, "boletines_pdfs.zip");
+        return response()->download($zip_file, "name_of_your_zip.zip");
     }
 }
