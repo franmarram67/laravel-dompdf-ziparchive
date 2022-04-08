@@ -17,35 +17,32 @@ class PDFController extends Controller
         $zip = new \ZipArchive();
         $zip->open($zip_file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         $temps = [];
-        // Each
+        // Each pdf must be a DOMPDF (\PDF) object
         foreach($pdfs as $pdf) {
             $name = "name_of_your_file.pdf";
             $relativePath = "pdf/".$name;
             
             $content = $pdf->download($relativePath)->getOriginalContent();
 
-            //Creamos el archivo temporal
+            // Create Temp File for the PDF
             $temp = tmpfile();
             fwrite($temp, $content);
             $path = stream_get_meta_data($temp)['uri'];
             array_push($temps, $temp);
 
-            //Añadimos el archivo al zip
+            // Add the PDF file to the Zip
             $zip->addFile($path, $name);
 
-            $zip->setExternalAttributesName($path,
-            \ZipArchive::OPSYS_UNIX,
-            fileperms($path) << 16);
-
         }
+        // Close the Zip Archive
         $zip->close();
 
-        //Borramos los archivos temporales
+        // Delete Temp Files
         foreach($temps as $temp) {
             fclose($temp);
         }
 
-        //Descargamos el zip
+        // Download Zip
         return response()->download($zip_file, "boletines_pdfs.zip");
     }
 }
